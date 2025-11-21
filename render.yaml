@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
-        value: *
+        value: "*"
       - key: MONGODB_URI
         sync: false
       - key: ADMIN_USERNAME
