@@ -1,0 +1,88 @@
+services:
+  # API Y20 Booster
+  - type: web
+    name: y20-booster-api
+    env: node
+    plan: free
+    rootDir: BOT+API/API KEYS Y20
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: *
+      - key: MONGODB_URI
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: BOT_URL
+        fromService:
+          type: web
+          name: y20-booster-bot
+          property: host
+      - key: BOT_WEBHOOK_URL
+        fromService:
+          type: web
+          name: y20-booster-bot
+          property: host
+        value: /webhook/redeem
+      - key: PUBLIC_API_URL
+        fromService:
+          type: web
+          name: y20-booster-api
+          property: host
+
+  # Bot Discord Y20 Booster
+  - type: web
+    name: y20-booster-bot
+    env: node
+    plan: free
+    rootDir: BOT+API/BOT Y20 BOOSTER
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: BOT_TOKEN
+        sync: false
+      - key: API_URL
+        fromService:
+          type: web
+          name: y20-booster-api
+          property: host
+      - key: MONGODB_URI
+        sync: false
+      - key: LOG_CHANNEL_ID
+        sync: false
+      - key: TICKET_LOG_CHANNEL_ID
+        sync: false
+      - key: TICKET_HISTORY_LOG_CHANNEL_ID
+        sync: false
+      - key: PANEL_OPEN_LOG_CHANNEL_ID
+        sync: false
+      - key: REDEEM_LOG_CHANNEL_ID
+        sync: false
+      - key: EXPIRED_LOG_CHANNEL_ID
+        sync: false
+      - key: REVOKED_LOG_CHANNEL_ID
+        sync: false
+      - key: PIX_API_URL
+        sync: false
+      - key: PIX_CHECK_INTERVAL
+        value: 15000
+      - key: KEYGEN_ACCOUNT_ID
+        sync: false
+      - key: KEYGEN_API_TOKEN
+        sync: false
+      - key: KEYGEN_POLICY_BASIC_ID
+        sync: false
+      - key: KEYGEN_POLICY_VIP_ID
+        sync: false
+
