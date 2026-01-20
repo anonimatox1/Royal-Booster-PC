@@ -1,47 +1,56 @@
 {
-  "name": "y20booster-electron",
-  "version": "1.0.85",
-  "description": "Painel de otimização Y20 BOOSTER com Electron e Node.js.",
+  "name": "RoyalBooster",
+  "version": "6.0.0",
+  "description": "Painel de otimização Royal Booster com Electron e Node.js.",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "npm run start",
     "clean-release": "node scripts/clean-release.js",
-    "generate-installer-assets": "node scripts/process-banner.js && node scripts/generate-icon.js",
-    "prebuild": "node scripts/clean-release.js",
+    "optimize-images": "node scripts/optimize-images.js",
+    "generate-installer-assets": "node scripts/convert-logocabeca-png-to-ico.js && node scripts/fix-icon-name.js && node scripts/convert-icon-simple.js && node scripts/process-banner.js && node scripts/generate-icon.js",
+    "prebuild": "node scripts/clean-release.js && node scripts/convert-bat-to-js.js && node scripts/consolidate-scripts.js && node scripts/convert-reg-to-exe.js && node scripts/remove-reg-from-mouse-fix.js && node scripts/convert-bat-to-exe.js && node scripts/filter-imagens-for-build.js && node scripts/minify-and-obfuscate.js && node scripts/randomize-names.js && node scripts/update-consolidated-scripts-names.js",
     "build": "npm run generate-installer-assets && electron-builder",
-    "postbuild": "node scripts/generate-integrity-postbuild.js && node scripts/fix-latest-yml.js && node scripts/upload-to-github.js",
+    "postbuild": "node scripts/copy-encrypted-scripts.js && node scripts/generate-integrity-postbuild.js && node scripts/fix-latest-yml.js",
     "upload-gitea": "node scripts/upload-to-gitea.js",
     "upload-github": "node scripts/upload-to-github.js",
     "upload-latest-yml": "node scripts/upload-latest-yml-to-release.js"
   },
   "keywords": [],
-  "author": "Y20 Booster",
+  "author": "Royal Booster",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/terresxy/Y20-Booster.git"
+    "url": "https://github.com/anonimatox1/Royal-Booster-PC.git"
   },
   "type": "commonjs",
   "devDependencies": {
     "electron": "^39.1.2",
     "electron-builder": "^26.0.12",
-    "jimp": "^1.6.0"
+    "javascript-obfuscator": "^4.2.2",
+    "terser": "^5.44.1"
   },
   "build": {
-    "appId": "com.y20.booster",
-    "productName": "Y20 BOOSTER",
+    "appId": "com.royal.booster",
+    "productName": "Royal Booster",
     "files": [
       "src/**",
       "assets/**",
-      "scripts/**",
       "package.json",
-      ".env"
+      "painel-scripts.js",
+      "script-mapping.json"
     ],
     "extraResources": [
       {
-        "from": "Imagens",
-        "to": "Imagens"
+        "from": "build/Imagens-filtered",
+        "to": "Imagens",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "build/name-mapping.json",
+        "to": "name-mapping.json"
       }
     ],
     "directories": {
@@ -51,26 +60,31 @@
     "win": {
       "target": "nsis",
       "icon": "assets/icons/win/icon.ico",
-      "artifactName": "Y20Booster-${version}-setup.${ext}",
-      "requestedExecutionLevel": "requireAdministrator"
+      "artifactName": "RoyalBooster-${version}-setup.${ext}",
+      "requestedExecutionLevel": "requireAdministrator",
+      "asar": true
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": false,
-      "createDesktopShortcut": true,
+      "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
-      "shortcutName": "Y20 BOOSTER",
-      "include": "build/installer.nsh",
+      "shortcutName": "Royal Booster",
       "installerIcon": "assets/icons/win/icon.ico",
       "uninstallerIcon": "assets/icons/win/icon.ico",
-      "installerHeaderIcon": "assets/icons/win/icon.ico",
       "menuCategory": "Games",
-      "warningsAsErrors": false
+      "warningsAsErrors": false,
+      "deleteAppDataOnUninstall": true,
+      "runAfterFinish": false,
+      "include": "build/installer.nsh",
+      "differentialPackage": false,
+      "language": "1046",
+      "installerHeaderIcon": "assets/icons/win/icon.ico"
     },
     "publish": {
       "provider": "github",
-      "owner": "terresxy",
-      "repo": "Y20-Booster",
+      "owner": "anonimatox1",
+      "repo": "Royal-Booster-PC",
       "releaseType": "release"
     }
   },
@@ -79,6 +93,9 @@
     "dotenv": "^16.6.1",
     "electron-store": "^11.0.2",
     "electron-updater": "^6.6.2",
-    "systeminformation": "^5.27.11"
+    "jimp": "^1.6.0",
+    "sharp": "^0.33.0",
+    "systeminformation": "^5.27.11",
+    "to-ico": "1.1.5"
   }
 }
